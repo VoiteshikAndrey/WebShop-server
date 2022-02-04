@@ -14,10 +14,6 @@ const root = {
         return pr; 
     },
 
-    getProductPrice: ({id}) => {
-        return Product.findById(id);
-    },
-
     createProduct: ({input}) => {
         const product = new Product({
             productname: input.productname,
