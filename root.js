@@ -31,7 +31,6 @@ const root = {
 
     createUser: async ({input}) => {
         const errors = await checkValidData(input);
-        console.log(Boolean(errors));
 
         if (errors.length) {
             return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
@@ -44,13 +43,31 @@ const root = {
             password: hashedPassword,
             userName: input.login,
         })
+
         await user.save();
+
         const token = jwt.sign(
             { userId: user.id },
             config.get('jwtSecret'),
             { expiresIn: '1h' }
         )
-        console.log({data: JSON.stringify(user), errors:JSON.stringify(null)});
+        return {data: JSON.stringify(user), errors:JSON.stringify(null)};
+    },
+
+    loginUser: async ({input}) => {
+        console.log(input);
+        const user = await User.findOne({login: input.login});
+        const errors = await checkLoginData(input, user);
+        console.log('Errors',errors);
+        if (errors) {
+            return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
+        }
+
+        const token = jwt.sign(
+            { userId: user.id },
+            config.get('jwtSecret'),
+            { expiresIn: '1h' }
+        )
         return {data: JSON.stringify(user), errors:JSON.stringify(null)};
     },
 
@@ -71,7 +88,26 @@ const root = {
     },
 }
 
-const checkValidData = async (input) => {
+
+const checkLoginData = async (input, user) => {
+    const login = input.login;
+    const password = input.password;
+    
+    if(!user) {
+        return "User is not found";
+    };
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(!isMatch) {
+        return 'Wrong password';
+    }
+
+    return;
+}
+
+
+const checkValidData = async (input, user) => {
     const login = input.login;
     const password = input.password;
     const confirmPassword = input.confirmPassword;

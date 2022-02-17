@@ -36,10 +36,15 @@ const schema = buildSchema(`
         errors: String
     }
 
-    input UserInput {
+    input RegisterInput {
         login: String!
         password: String!
         confirmPassword: String!
+    }
+
+    input LoginInput {
+        login: String!
+        password: String!
     }
 
     input ProductInput { 
@@ -59,7 +64,8 @@ const schema = buildSchema(`
 
     type Mutation {
         createProduct(input: ProductInput): Product
-        createUser(input: UserInput): ReturnedData
+        createUser(input: RegisterInput): ReturnedData
+        loginUser(input: LoginInput): ReturnedData
         addProductToCart(productId: String, count: Int): Cart
     }
 `);

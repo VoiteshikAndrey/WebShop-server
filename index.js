@@ -27,13 +27,6 @@ async function start(){
         });
         app.listen(PORT);
         console.log(`Server started on port:${PORT}`);
-        const token = jwt.sign(
-            { userId: "123123123123" },
-            config.get('jwtSecret'),
-            { expiresIn: '1h' }
-        )
-        console.log("Токен готов:", token);
-        // const cart = await Cart.findOneAndUpdate({_id: "61eed0fadf951a876b26fadb"}, {$push: {productList: {productId: "productId", count: "count"}}});
 
     } catch (e) {
         console.log('Server error', e.message);
