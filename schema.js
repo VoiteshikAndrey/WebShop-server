@@ -19,7 +19,27 @@ const schema = buildSchema(`
 
     type ProductList {
         productId: String!
-        count: String
+        count: Int!
+    }
+
+    type User {
+        id: ID
+        login: String!
+        password: String!
+        userName: String!
+        role: String!
+        avatar: String!
+    }
+
+    type ReturnedData {
+        data: String
+        errors: String
+    }
+
+    input UserInput {
+        login: String!
+        password: String!
+        confirmPassword: String!
     }
 
     input ProductInput { 
@@ -39,7 +59,8 @@ const schema = buildSchema(`
 
     type Mutation {
         createProduct(input: ProductInput): Product
-        addProductToCart(productId: String, count: String): Cart
+        createUser(input: UserInput): ReturnedData
+        addProductToCart(productId: String, count: Int): Cart
     }
 `);
 
