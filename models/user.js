@@ -10,6 +10,10 @@ const schema = new Schema({
         type: String, 
         required: true
     },
+    cartId: {
+        type: String, 
+        required: true
+    },
     userName: {
         type: String, 
         required: true

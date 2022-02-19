@@ -7,6 +7,10 @@ const cartSchema = new Schema({
         productId: {type: String},
         count: {type: String, default: "1"}
     }],
+    totalPrice: {
+        type: Number, 
+        default: 0
+    },
 });
 
 module.exports = model('Cart', cartSchema);

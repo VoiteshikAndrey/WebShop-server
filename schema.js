@@ -14,7 +14,7 @@ const schema = buildSchema(`
     type Cart {
         id: ID
         productList:[ProductList]
-        totalPrice: String
+        totalPrice: String 
     }
 
     type ProductList {
@@ -26,6 +26,7 @@ const schema = buildSchema(`
         id: ID
         login: String!
         password: String!
+        cartId: String!
         userName: String!
         role: String!
         avatar: String!

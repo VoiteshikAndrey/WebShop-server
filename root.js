@@ -7,6 +7,9 @@ const config = require('config');
 // const {checkValidData} = require('./middleware/checkValidDate');
 
 const root = {
+    saveCartToDB: ({input}) => {
+        return {data: JSON.stringify(null), errors:JSON.stringify(null)}
+    },
     getAllProducts: () => {
         return Product.find()
     },
@@ -38,9 +41,13 @@ const root = {
 
         const hashedPassword = await bcrypt.hash(input.password, 12);
         
+        const userCart = new Cart();
+        await userCart.save();
+        
         const user = new User({
             login: input.login,
             password: hashedPassword,
+            cartId: userCart.id,
             userName: input.login,
         })
 
@@ -63,15 +70,21 @@ const root = {
             return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
         }
 
+        const userCart = await Cart.findById(user.cartId);
+
         const token = jwt.sign(
             { userId: user.id },
             config.get('jwtSecret'),
             { expiresIn: '1h' }
         )
-        return {data: JSON.stringify(user), errors:JSON.stringify(null)};
+
+        
+        console.log({data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
+        return {data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)};
     },
 
-    getCart: ({id}) => {
+
+    getCartById: ({id}) => {
         console.log(id);
         return Cart.findById(id);
     },
