@@ -9,6 +9,18 @@ const schema = buildSchema(`
         productbrand: String
         images: [String]
         price: Int
+        characteristics: Characteristics
+    }
+
+    type Characteristics { 
+        characteristicsName: String
+        variants: [Variants]
+    }
+
+    type Variants { 
+        variantName: String
+        number: Int
+        id: ID
     }
 
     type Cart {
@@ -19,6 +31,7 @@ const schema = buildSchema(`
 
     type ProductList {
         productId: String!
+        characteristic: ID!
         count: Int!
     }
 
@@ -43,9 +56,20 @@ const schema = buildSchema(`
         confirmPassword: String!
     }
 
+    input ProductListInput {
+        productId: String!
+        count: Int!
+    }
+
     input LoginInput {
         login: String!
         password: String!
+    }
+
+    input CartInput {
+        id: ID
+        productList: String
+        totalPrice: String 
     }
 
     input ProductInput { 
@@ -60,12 +84,14 @@ const schema = buildSchema(`
     type Query {
         getAllProducts: [Product]
         getProduct(id: ID): Product
+        getProductsByCategory(category: String): [Product]
         getCart(id: ID): Cart
     }
 
     type Mutation {
         createProduct(input: ProductInput): Product
         createUser(input: RegisterInput): ReturnedData
+        saveCartToDB(input: String): ReturnedData
         loginUser(input: LoginInput): ReturnedData
         addProductToCart(productId: String, count: Int): Cart
     }

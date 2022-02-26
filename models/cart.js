@@ -4,8 +4,16 @@ const Product = require('./product');
 
 const cartSchema = new Schema({
     productList: [{
-        productId: {type: String},
-        count: {type: String, default: "1"}
+        productId: {
+            type: String
+        },
+        count: {
+            type: Number,
+            default: 1
+        },
+        characteristic: {
+            type: String
+        }
     }],
     totalPrice: {
         type: Number, 

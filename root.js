@@ -4,20 +4,21 @@ const User = require('./models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-// const {checkValidData} = require('./middleware/checkValidDate');
 
 const root = {
-    saveCartToDB: ({input}) => {
-        return {data: JSON.stringify(null), errors:JSON.stringify(null)}
-    },
     getAllProducts: () => {
-        return Product.find()
+        return Product.find();
     },
 
+    getProductsByCategory: async ({category}) => {
+        if(category !== 'All'){
+            return await Product.find({category: category});
+        }
+        return await Product.find();
+    },
+    
     getProduct: async ({id}) => {
-        console.log(id);
-        const pr = await Product.findById(id);
-        return pr; 
+        return await Product.findById(id);
     },
 
     createProduct: ({input}) => {
@@ -27,18 +28,18 @@ const root = {
             price: input.price,
             category: input.category,
             images: input.images,
-         });
+        });
         product.save();
         return product;
     },
-
+    
     createUser: async ({input}) => {
         const errors = await checkValidData(input);
-
+        
         if (errors.length) {
             return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
         }
-
+        
         const hashedPassword = await bcrypt.hash(input.password, 12);
         
         const userCart = new Cart();
@@ -50,7 +51,7 @@ const root = {
             cartId: userCart.id,
             userName: input.login,
         })
-
+        
         await user.save();
 
         const token = jwt.sign(
@@ -58,34 +59,40 @@ const root = {
             config.get('jwtSecret'),
             { expiresIn: '1h' }
         )
-        return {data: JSON.stringify(user), errors:JSON.stringify(null)};
+        console.log("3",{data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
+        return {data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)};
     },
-
+    
     loginUser: async ({input}) => {
-        console.log(input);
+        console.log("4",input);
         const user = await User.findOne({login: input.login});
         const errors = await checkLoginData(input, user);
         console.log('Errors',errors);
         if (errors) {
             return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
         }
-
+        
         const userCart = await Cart.findById(user.cartId);
-
+        
         const token = jwt.sign(
             { userId: user.id },
             config.get('jwtSecret'),
             { expiresIn: '1h' }
-        )
-
-        
-        console.log({data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
+            )
+            
+        console.log("5",{data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
         return {data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)};
     },
-
-
+        
+    saveCartToDB: async ({input}) => {
+        const cart = JSON.parse(input);
+        console.log("cart",cart);
+        await Cart.updateOne({_id: cart.cartId}, {$set: {productList: cart.productList, totalPrice: cart.totalPrice}});
+        return {data: JSON.stringify(null), errors:JSON.stringify(null)}
+    },
+        
     getCartById: ({id}) => {
-        console.log(id);
+        console.log("1", id);
         return Cart.findById(id);
     },
 
@@ -94,11 +101,11 @@ const root = {
         return send;
     },
 
-    addProductToCart: async ({productId, count}) => {
-        const cart = await Cart.findOneAndUpdate({_id: "61efcf05599eca673ae3cf24"},
-         {$push: {productList: {productId: productId, count: count}}});
-        return cart;
-    },
+    // addProductToCart: async ({productId, count, characteristic}) => {
+    //     const cart = await Cart.findOneAndUpdate({_id: "61efcf05599eca673ae3cf24"},
+    //      {$push: {productList: {productId: productId, count: count}}});
+    //     return cart;
+    // },
 }
 
 
@@ -150,11 +157,6 @@ const checkValidData = async (input, user) => {
     
     return errors
 }
-
-// let checkUniqueLogin = new Promise((resolve, reject) => {
-//     const candidate = User.findOne({login: login});
-//     resolve(candidate);
-// })
 
 const checkLogin = (login) => {
     message = '';

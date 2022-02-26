@@ -17,7 +17,13 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    images: {type: [String]}
+    images: {
+        type: [String]
+    },
+    characteristics: {
+        type: Object,
+    }
+    
 });
 
 module.exports = model('Product', productSchema);
