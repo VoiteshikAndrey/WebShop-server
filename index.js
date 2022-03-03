@@ -10,6 +10,12 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 
+app.set('views', './public');
+app.use(express.static(__dirname + '/public'));
+app.get('/*', (req, res) => {
+    res.sendFile('./public/index.html', {root: __dirname});
+});
+
 app.use(cors());
 
 app.use('/graphql', graphqlHTTP({
