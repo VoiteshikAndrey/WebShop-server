@@ -59,15 +59,12 @@ const root = {
             config.get('jwtSecret'),
             { expiresIn: '1h' }
         )
-        console.log("3",{data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
         return {data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)};
     },
     
     loginUser: async ({input}) => {
-        console.log("4",input);
         const user = await User.findOne({login: input.login});
         const errors = await checkLoginData(input, user);
-        console.log('Errors',errors);
         if (errors) {
             return {data: JSON.stringify(null), errors:JSON.stringify(errors)}
         }
@@ -80,19 +77,16 @@ const root = {
             { expiresIn: '1h' }
             )
             
-        console.log("5",{data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)});
         return {data: JSON.stringify({user, userCart}), errors:JSON.stringify(null)};
     },
         
     saveCartToDB: async ({input}) => {
         const cart = JSON.parse(input);
-        console.log("cart",cart);
         await Cart.updateOne({_id: cart.cartId}, {$set: {productList: cart.productList, totalPrice: cart.totalPrice}});
         return {data: JSON.stringify(null), errors:JSON.stringify(null)}
     },
         
     getCartById: ({id}) => {
-        console.log("1", id);
         return Cart.findById(id);
     },
 
