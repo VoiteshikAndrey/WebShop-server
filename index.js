@@ -6,7 +6,7 @@ const cors = require('cors');
 const schema = require('./schema')
 const root = require('./root');
 const jwt = require('jsonwebtoken');
-// const Cart = require('./models/cart');
+const helmet = require("helmet");
 
 const app = express();
 
@@ -17,6 +17,7 @@ app.get('/*', (req, res) => {
 });
 
 app.use(cors());
+app.use(helmet());
 
 app.use('/graphql', graphqlHTTP({
     graphiql: true,

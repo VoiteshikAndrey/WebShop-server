@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const root = {
-    getAllProducts: () => {
+    getAllProducts: async () => {
         return Product.find();
     },
 
